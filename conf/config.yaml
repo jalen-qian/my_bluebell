@@ -1,0 +1,25 @@
+name: "bluebell"
+version: "v1.0.0"
+mode: "dev"
+port: ":8080"
+
+log:
+  level: "debug" # 日志输出最低等级
+  filename: "./runtime/web_app.log" #日志文件名称
+  max_size: 10 # 日志单个日志文件最大大小（大于这个值会切割）单位：M
+  max_backups: 5 # 最大的备份日志文件数量
+  max_age: 30 # 最多备份的天数
+
+mysql: # mysql配置
+  user: "root" # 用户名
+  password: "123456" # 密码
+  host: "47.107.240.175" # Mysql服务主机
+  port: "3306" # mysql服务端口
+  dbname: "bluebell" # 要连接的数据库名
+  max_idle_conns: 10 # 最大的连接池中空闲的连接数量
+  max_open_conns: 100 # 最大的打开数据库的连接数量
+
+redis: # redis配置
+  addr: "47.107.240.175:6379"
+  db: 0
+  password: ""
