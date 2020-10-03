@@ -27,6 +27,12 @@ func SetupRouter() *gin.Engine {
 	{
 		//社区列表接口
 		v1Group.GET("/community", controller.CommunityHandler)
+		//社区详情接口
+		v1Group.GET("/community/:id", controller.CommunityDetailHandler)
+		//创建帖子接口
+		v1Group.POST("/post", controller.AddPostHandler)
+		//帖子详情接口
+		v1Group.GET("/post/:postId", controller.PostDetailHandler)
 	}
 
 	return r

@@ -14,9 +14,10 @@ type Community struct {
 	gorm.Model    `json:"-"` //忽略掉
 }
 
-// 定义社区详情结构体，对应社区表中的3个字段，并规定json返回的字段
+// 定义社区详情结构体，对应社区表中的4个字段，并规定json返回的字段
 type CommunityDetail struct {
-	Id         int64     `json:"id" gorm:"column:community_id"`
-	Name       string    `json:"name" gorm:"column:community_name"`
-	CreateTime time.Time `json:"create_time" gorm:"column:create_at"`
+	Id           int64     `json:"id" gorm:"column:community_id"`
+	Name         string    `json:"name" gorm:"column:community_name"`
+	Introduction string    `json:"introduction" gorm:"column:introduction"`
+	CreateTime   time.Time `json:"create_time" gorm:"column:created_at"`
 }

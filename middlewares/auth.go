@@ -11,12 +11,6 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-//定义Key名称，避免出现硬编码字符串
-const (
-	ContextUserIdKey   = "userId"
-	ContextUserNameKey = "userName"
-)
-
 // 添加用于Token校验的中间件
 func JWTAuthMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
@@ -65,8 +59,8 @@ func JWTAuthMiddleware() gin.HandlerFunc {
 			return
 		}
 		//将Token中携带的参数，传到Context中
-		c.Set(ContextUserIdKey, myClaims.UserId)
-		c.Set(ContextUserNameKey, myClaims.UserName)
+		c.Set(controller.ContextUserIdKey, myClaims.UserId)
+		c.Set(controller.ContextUserNameKey, myClaims.UserName)
 		c.Next()
 	}
 }

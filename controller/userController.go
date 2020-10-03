@@ -14,6 +14,16 @@ import (
 	"go.uber.org/zap"
 )
 
+//定义Key名称，避免出现硬编码字符串
+const (
+	ContextUserIdKey   = "userId"
+	ContextUserNameKey = "userName"
+)
+
+func generateCurrentUserId(c *gin.Context) int64 {
+	return c.GetInt64(ContextUserIdKey)
+}
+
 func SignUpHandler(c *gin.Context) {
 	//注册流程
 	//1.获取参数

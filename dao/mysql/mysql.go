@@ -26,7 +26,7 @@ func Init(cfg *settings.MysqlConfig, mode string) (err error) {
 	)
 	Db, err = gorm.Open(mysql.Open(dsn), &gorm.Config{})
 	if err != nil {
-		//zap.L().Error("connect to mysql failed,err:%v\n", zap.Error(err))
+		zap.L().Error("connect to mysql failed", zap.Error(err))
 		return
 	}
 	//开发环境，实时打印SQL
@@ -56,8 +56,17 @@ func Init(cfg *settings.MysqlConfig, mode string) (err error) {
 
 	//同步表结构
 	err = AutoMigrate(&models.User{})
+	if err != nil {
+		return err
+	}
 	err = AutoMigrate(&models.Community{})
-
+	if err != nil {
+		return err
+	}
+	err = AutoMigrate(&models.Post{})
+	if err != nil {
+		return err
+	}
 	return
 }
 

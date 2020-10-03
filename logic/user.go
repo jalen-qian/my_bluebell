@@ -31,11 +31,7 @@ func SignUp(p *models.ParamSignUp) (err error) {
 		//雪花算法出错，也直接返回错误
 		return err
 	}
-	err = mysql.Db.Save(&user).Error
-	if err != nil {
-		return err
-	}
-
+	err = mysql.SaveUser(&user)
 	return
 }
 

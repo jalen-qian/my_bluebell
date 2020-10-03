@@ -56,3 +56,19 @@ func Login(user *models.User) (err error) {
 	}
 	return
 }
+
+// 根据用户ID查询用户信息
+func GetUserById(uId int64) (user *models.User, err error) {
+	user = new(models.User)
+	result := Db.Model(user).
+		Select("user_id", "user_name").
+		Where("user_id = ?", uId).
+		First(user)
+	if result.Error != nil {
+		if errors.Is(result.Error, gorm.ErrRecordNotFound) {
+			return nil, ErrUserNotExist
+		}
+		return nil, result.Error
+	}
+	return user, nil
+}
