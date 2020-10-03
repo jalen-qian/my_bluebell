@@ -9,9 +9,9 @@ import (
 	"strings"
 	"time"
 
+	"github.com/bluebell/settings"
 	"github.com/gin-gonic/gin"
 	"github.com/natefinch/lumberjack"
-	"github.com/web_app_base/settings"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
 )

@@ -18,10 +18,13 @@ var Conf = new(AppConfig) //提供一个全局的变量供外部调用
 配置项信息可以序列化到此结构体对象中
 */
 type AppConfig struct {
-	Name         string                 `mapstructure:"name"`    //应用名称
-	Version      string                 `mapstructure:"version"` //应用版本
-	Mode         string                 `mapstructure:"mode"`    //当前运行模式 dev 开发 test 测试 release 线上
-	NodeId       int64                  `mapstructure:"node_id"` //雪花算法当前节点ID
+	Name         string                 `mapstructure:"name"`        //应用名称
+	Version      string                 `mapstructure:"version"`     //应用版本
+	Mode         string                 `mapstructure:"mode"`        //当前运行模式 dev 开发 test 测试 release 线上
+	NodeId       int64                  `mapstructure:"node_id"`     //雪花算法当前节点ID
+	Port         string                 `mapstructure:"port"`        //启动端口
+	Md5Secret    string                 `mapstructure:"md5Secret"`   //md5加密算法的秘钥
+	TokenSecret  string                 `mapstructure:"tokenSecret"` //token秘钥
 	*MysqlConfig `mapstructure:"mysql"` //mysql配置
 	*LogConfig   `mapstructure:"log"`   //log配置
 	*RedisConfig `mapstructure:"redis"` //redis配置
@@ -83,7 +86,7 @@ func Init() (err error) {
 
 	// 5.设置当配置文件改变的回调
 	viper.OnConfigChange(func(e fsnotify.Event) {
-		fmt.Printf("注意：配置文件已变更...")
+		fmt.Println("注意：配置文件已变更...")
 		if err = viper.Unmarshal(Conf); err != nil {
 			fmt.Printf("viper unmarshal failed,err:%v\n", err)
 			return

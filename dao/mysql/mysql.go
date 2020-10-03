@@ -4,9 +4,11 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/bluebell/models"
+
 	"go.uber.org/zap"
 
-	"github.com/web_app_base/settings"
+	"github.com/bluebell/settings"
 	"gorm.io/driver/mysql"
 	_ "gorm.io/driver/mysql"
 	"gorm.io/gorm"
@@ -14,7 +16,7 @@ import (
 
 var Db *gorm.DB
 
-func Init(cfg *settings.MysqlConfig) (err error) {
+func Init(cfg *settings.MysqlConfig, mode string) (err error) {
 	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8mb4&parseTime=True&loc=Local",
 		cfg.User,
 		cfg.Password,
@@ -26,6 +28,10 @@ func Init(cfg *settings.MysqlConfig) (err error) {
 	if err != nil {
 		//zap.L().Error("connect to mysql failed,err:%v\n", zap.Error(err))
 		return
+	}
+	//开发环境，实时打印SQL
+	if mode == "dev" {
+		Db = Db.Debug()
 	}
 	db, err := Db.DB()
 	if err != nil {
@@ -44,5 +50,18 @@ func Init(cfg *settings.MysqlConfig) (err error) {
 
 	err = db.Ping()
 
+	if err != nil {
+		return
+	}
+
+	//同步表结构
+	err = AutoMigrate(&models.User{})
+	err = AutoMigrate(&models.Community{})
+
 	return
+}
+
+func AutoMigrate(model interface{}) (err error) {
+	err = Db.AutoMigrate(model)
+	return err
 }

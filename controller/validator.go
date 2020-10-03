@@ -5,6 +5,8 @@ import (
 	"reflect"
 	"strings"
 
+	"github.com/bluebell/models"
+
 	"github.com/gin-gonic/gin/binding"
 	"github.com/go-playground/locales/en"
 	"github.com/go-playground/locales/zh"
@@ -32,7 +34,7 @@ func InitTrans(locale string) (err error) {
 		})
 
 		// 为SignUpParam注册自定义校验方法
-		//v.RegisterStructValidation(SignUpParamStructLevelValidation, models.ParamSignUp{})
+		v.RegisterStructValidation(SignUpParamStructLevelValidation, models.ParamSignUp{})
 
 		zhT := zh.New() // 中文翻译器
 		enT := en.New() // 英文翻译器

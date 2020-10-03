@@ -1,7 +1,9 @@
 name: "bluebell"
 version: "v1.0.0"
 mode: "dev"
-port: ":8080"
+port: ":8081"
+md5Secret: "#$#s223434afwsd$%"
+tokenSecret: "Jalen$$1231#)*s-bluebell$8892" #JWT日志
 
 log:
   level: "debug" # 日志输出最低等级

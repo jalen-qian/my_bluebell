@@ -9,19 +9,21 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/web_app_base/pkg/snowflake"
+	"github.com/bluebell/controller"
 
-	"github.com/web_app_base/dao/redis"
+	"github.com/bluebell/pkg/snowflake"
 
-	"github.com/web_app_base/dao/mysql"
+	"github.com/bluebell/dao/redis"
+
+	"github.com/bluebell/dao/mysql"
 
 	"go.uber.org/zap"
 
-	"github.com/web_app_base/router"
+	"github.com/bluebell/router"
 
-	"github.com/web_app_base/logger"
+	"github.com/bluebell/logger"
 
-	"github.com/web_app_base/settings"
+	"github.com/bluebell/settings"
 )
 
 /**
@@ -40,7 +42,7 @@ func main() {
 		return
 	}
 	// 3.初始化MySQL连接()
-	if err := mysql.Init(settings.Conf.MysqlConfig); err != nil {
+	if err := mysql.Init(settings.Conf.MysqlConfig, settings.Conf.Mode); err != nil {
 		zap.L().Error("mysql Init failed...", zap.Error(err))
 		return
 	}
@@ -55,6 +57,11 @@ func main() {
 		zap.L().Error("Init snowflake failed", zap.Error(err))
 		return
 	}
+	//设置校验器
+	if err := controller.InitTrans("zh"); err != nil {
+		zap.L().Error("Init Trans failed", zap.Error(err))
+		return
+	}
 
 	// 6.设置路由
 	r := router.SetupRouter()
@@ -65,7 +72,7 @@ func main() {
 
 	//7.1.将gin路由注册到http.Server中
 	sev := http.Server{
-		Addr:    ":8080",
+		Addr:    settings.Conf.Port,
 		Handler: r,
 	}
 

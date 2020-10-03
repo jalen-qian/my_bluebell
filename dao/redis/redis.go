@@ -1,8 +1,8 @@
 package redis
 
 import (
+	"github.com/bluebell/settings"
 	"github.com/go-redis/redis"
-	"github.com/web_app_base/settings"
 )
 
 var rdb *redis.Client
