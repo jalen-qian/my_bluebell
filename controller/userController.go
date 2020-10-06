@@ -20,10 +20,6 @@ const (
 	ContextUserNameKey = "userName"
 )
 
-func generateCurrentUserId(c *gin.Context) int64 {
-	return c.GetInt64(ContextUserIdKey)
-}
-
 func SignUpHandler(c *gin.Context) {
 	//注册流程
 	//1.获取参数
@@ -43,7 +39,7 @@ func SignUpHandler(c *gin.Context) {
 		return
 	}
 	zap.L().Debug("注册参数：", zap.Any("param", paramSignUp))
-	//3.交给logic得到结果
+	//3.交给logic注册得到结果
 	if err := logic.SignUp(paramSignUp); err != nil {
 		zap.L().Error("Sign up failed ", zap.Error(err))
 		if errors.Is(err, mysql.ErrUserExist) {

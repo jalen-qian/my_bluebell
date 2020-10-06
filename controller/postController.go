@@ -16,7 +16,7 @@ import (
 在这个文件中定义帖子相关接口的处理函数
 */
 
-// 创建帖子
+// AddPostHandler 创建帖子接口处理函数
 func AddPostHandler(c *gin.Context) {
 	// 1.获取参数 标题 内容 社区ID并校验参数
 	p := new(models.ParamAddPost)
@@ -30,7 +30,7 @@ func AddPostHandler(c *gin.Context) {
 		ResponseError(c, CodeInvalidParam)
 	}
 	// 2.保存帖子
-	p.UserId = generateCurrentUserId(c)
+	p.UserId = getCurrentUserId(c)
 	if err := logic.SavePost(p); err != nil {
 		zap.L().Error("创建帖子 logic.SavePost(p) failed", zap.Error(err))
 		if errors.Is(err, mysql.ErrCommunityNotFound) {
@@ -67,4 +67,52 @@ func PostDetailHandler(c *gin.Context) {
 	}
 	//3.返回正确响应
 	ResponseSuccess(c, post)
+}
+
+// PostListHandler 帖子列表接口处理函数
+func PostListHandler(c *gin.Context) {
+	// 1.获取分页参数
+	page, pageSize := getPageParams(c)
+	zap.L().Info("get Page and PageSize", zap.Int("page", page), zap.Int("pageSize", pageSize))
+	// 2.从数据库中查询
+	postList, err := logic.GetPostList(page, pageSize)
+	if err != nil {
+		zap.L().Error("logic.GetPostList(page,pageSize) failed", zap.Error(err))
+		ResponseErrorWithMsg(c, CodeUsualFailed, "获取帖子列表失败")
+		return
+	}
+	ResponseSuccess(c, postList)
+}
+
+// PostVoteHandler 帖子投票处理函数
+func PostVoteHandler(c *gin.Context) {
+	// 1.参数校验 文章ID 投票情况(1赞成票 -1反对票 0取消之前的投票)
+	params := new(models.ParamPostVote)
+	if err := c.ShouldBindJSON(params); err != nil {
+		//类型断言，判断是否是因为validator出错
+		if errs, ok := err.(validator.ValidationErrors); ok {
+			ResponseErrorWithMsg(c, CodeInvalidParam, removeTopStruct(errs.Translate(trans)))
+			return
+		}
+		//不是validator报错，说明是其他参数错误
+		ResponseError(c, CodeInvalidParam)
+		return
+	}
+	userId := getCurrentUserId(c)
+	// 2.业务逻辑处理
+	if err := logic.PostVote(userId, params); err != nil {
+		zap.L().Error("logic.PostVote(userId, params) failed",
+			zap.Error(err),
+			zap.Int64("userId", userId),
+			zap.Any("params", params))
+		//帖子不存在 或者 投票期已过，返回对应的错误
+		if errors.Is(err, logic.ErrPostNotExists) || errors.Is(err, logic.ErrVoteTimeOut) {
+			ResponseErrorWithMsg(c, CodeUsualFailed, err.Error())
+			return
+		}
+		ResponseErrorWithMsg(c, CodeUsualFailed, "投票失败")
+		return
+	}
+	// 3.返回响应
+	ResponseSuccess(c, nil)
 }

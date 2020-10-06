@@ -25,6 +25,7 @@ func SignUp(p *models.ParamSignUp) (err error) {
 		return mysql.ErrUserExist
 	}
 	//用户不存在, 保存用户进入数据库
+	//保存用户之前，对用户密码进行加密
 	user.Password = tools.Md5Encrypt(p.Password)
 	user.UserId, err = snowflake.GetId()
 	if err != nil {

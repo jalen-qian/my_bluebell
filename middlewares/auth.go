@@ -3,6 +3,8 @@ package middlewares
 import (
 	"strings"
 
+	"github.com/bluebell/settings"
+
 	"github.com/bluebell/dao/redis"
 
 	"github.com/bluebell/pkg/jwt"
@@ -43,20 +45,23 @@ func JWTAuthMiddleware() gin.HandlerFunc {
 			c.Abort()
 			return
 		}
-		//校验成功，将从Redis中取出Token进行比较
-		redisToken, err := redis.GetUserToken(myClaims.UserId)
-		if err != nil {
-			//如果获取Redis存储的Token失败，说明Redis Token已失效，需要重新登录
-			controller.ResponseError(c, controller.CodeNeedLogin)
-			c.Abort()
-			return
-		}
+		//如果限制单点登录，则通过Redis
+		if settings.Conf.SingleSignOn {
+			//校验成功，将从Redis中取出Token进行比较
+			redisToken, err := redis.GetUserToken(myClaims.UserId)
+			if err != nil {
+				//如果获取Redis存储的Token失败，说明Redis Token已失效，需要重新登录
+				controller.ResponseError(c, controller.CodeNeedLogin)
+				c.Abort()
+				return
+			}
 
-		//如果Redis中的Token和传过来的Token不一致，也需要重新登录
-		if authSplit[1] != redisToken {
-			controller.ResponseError(c, controller.CodeNeedLogin)
-			c.Abort()
-			return
+			//如果Redis中的Token和传过来的Token不一致，也需要重新登录
+			if authSplit[1] != redisToken {
+				controller.ResponseError(c, controller.CodeNeedLogin)
+				c.Abort()
+				return
+			}
 		}
 		//将Token中携带的参数，传到Context中
 		c.Set(controller.ContextUserIdKey, myClaims.UserId)

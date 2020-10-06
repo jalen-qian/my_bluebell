@@ -4,6 +4,7 @@ mode: "dev"
 port: ":8081"
 md5Secret: "#$#s223434afwsd$%"
 tokenSecret: "Jalen$$1231#)*s-bluebell$8892" #JWT日志
+single_sign_on: false #是否限制单点登录，这里置为 false
 
 log:
   level: "debug" # 日志输出最低等级

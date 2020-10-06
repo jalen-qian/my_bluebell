@@ -13,7 +13,7 @@ import (
 )
 
 // 定义Token过期时间（2个小时）
-const TokenExpireDuration = time.Hour * 2
+const TokenExpireDuration = time.Hour * 24 * 30
 
 // 定义Secret
 var TokenSecret = []byte(settings.Conf.TokenSecret)

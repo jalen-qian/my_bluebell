@@ -33,6 +33,11 @@ func SetupRouter() *gin.Engine {
 		v1Group.POST("/post", controller.AddPostHandler)
 		//帖子详情接口
 		v1Group.GET("/post/:postId", controller.PostDetailHandler)
+		//帖子列表接口，支持分页
+		v1Group.GET("/posts2", controller.PostListHandler)
+
+		//帖子投票接口
+		v1Group.POST("/vote", controller.PostVoteHandler)
 	}
 
 	return r

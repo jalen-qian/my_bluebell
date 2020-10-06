@@ -18,13 +18,14 @@ var Conf = new(AppConfig) //提供一个全局的变量供外部调用
 配置项信息可以序列化到此结构体对象中
 */
 type AppConfig struct {
-	Name         string                 `mapstructure:"name"`        //应用名称
-	Version      string                 `mapstructure:"version"`     //应用版本
-	Mode         string                 `mapstructure:"mode"`        //当前运行模式 dev 开发 test 测试 release 线上
-	NodeId       int64                  `mapstructure:"node_id"`     //雪花算法当前节点ID
-	Port         string                 `mapstructure:"port"`        //启动端口
-	Md5Secret    string                 `mapstructure:"md5Secret"`   //md5加密算法的秘钥
-	TokenSecret  string                 `mapstructure:"tokenSecret"` //token秘钥
+	Name         string                 `mapstructure:"name"`           //应用名称
+	Version      string                 `mapstructure:"version"`        //应用版本
+	Mode         string                 `mapstructure:"mode"`           //当前运行模式 dev 开发 test 测试 release 线上
+	NodeId       int64                  `mapstructure:"node_id"`        //雪花算法当前节点ID
+	Port         string                 `mapstructure:"port"`           //启动端口
+	Md5Secret    string                 `mapstructure:"md5Secret"`      //md5加密算法的秘钥
+	TokenSecret  string                 `mapstructure:"tokenSecret"`    //token秘钥
+	SingleSignOn bool                   `mapstructure:"single_sign_on"` //是否限制单点登录
 	*MysqlConfig `mapstructure:"mysql"` //mysql配置
 	*LogConfig   `mapstructure:"log"`   //log配置
 	*RedisConfig `mapstructure:"redis"` //redis配置

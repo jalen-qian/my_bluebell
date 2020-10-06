@@ -26,8 +26,6 @@ func CheckUserExists(userName string) (isExist bool, err error) {
 
 // SaveUser 保存一个新的用户
 func SaveUser(user *models.User) (err error) {
-	//保存用户之前，对用户密码进行加密
-	user.Password = tools.Md5Encrypt(user.Password)
 	err = Db.Save(user).Error
 	if err != nil {
 		return err

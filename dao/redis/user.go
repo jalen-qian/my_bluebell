@@ -5,11 +5,6 @@ import (
 	"time"
 )
 
-const (
-	// KeyUserToken 用户Token Redis Key的前缀
-	KeyUserToken = "UserToken_"
-)
-
 // GetUserToken 通过用户ID从Redis中取一个持久化的Token
 func GetUserToken(userId int64) (token string, err error) {
 	return rdb.Get(getUserTokenKey(userId)).Result()
@@ -21,5 +16,5 @@ func SetUserToken(userId int64, token string, expiration time.Duration) error {
 }
 
 func getUserTokenKey(userId int64) string {
-	return fmt.Sprintf("%s%d", KeyUserToken, userId)
+	return fmt.Sprintf("%s%d", KeyUserTokenPF, userId)
 }
