@@ -84,9 +84,15 @@ func GetPostList(page, pageSize int) (data []*models.ApiPostDetail, err error) {
 	if err != nil {
 		return nil, err
 	}
-	//2.遍历每个帖子，查询帖子包含的
-	data = make([]*models.ApiPostDetail, 0, len(posts))
-	for _, post := range posts {
+	//2.遍历每个帖子，查询帖子包含的社区数据和用户名称
+	data = fillCommunityAndAuthorForPosts(&posts)
+	return
+}
+
+// 遍历每个帖子，查询帖子包含的社区数据和用户名称
+func fillCommunityAndAuthorForPosts(posts *[]*models.Post) []*models.ApiPostDetail {
+	data := make([]*models.ApiPostDetail, 0, len(*posts))
+	for _, post := range *posts {
 		commDetail, err := mysql.GetCommunityDetailById(post.CommunityId)
 		if err != nil {
 			continue
@@ -102,7 +108,30 @@ func GetPostList(page, pageSize int) (data []*models.ApiPostDetail, err error) {
 			CommunityDetail: commDetail,
 		})
 	}
-	return
+	return data
+}
+
+// 获取帖子列表接口2
+// 可以根据评分或者发布时间来排序
+func GetPostList2(p *models.ParamPostList) (data []*models.ApiPostDetail, err error) {
+	//首先从redis读取文章ID
+	ids, err := redis.GetPostIdsByPostListParams(p)
+	if err != nil {
+		return nil, err
+	}
+	zap.L().Debug("redis.GetPostIdsByPostListParams(p)", zap.Any("ids", ids), zap.Any("params", p))
+	//将这些ID转换为int64类型
+	//通过Mysql查询这些ID对应的帖子
+	posts, err := mysql.GetPostListByIds(ids)
+	if err != nil {
+		zap.L().Error("mysql.GetPostListByIds(ids) failed", zap.Error(err))
+		return nil, err
+	}
+	//对每个帖子按照ids的顺序排序
+
+	//2.遍历每个帖子，查询帖子包含的
+	data = fillCommunityAndAuthorForPosts(&posts)
+	return data, nil
 }
 
 /**

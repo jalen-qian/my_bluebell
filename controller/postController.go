@@ -84,6 +84,38 @@ func PostListHandler(c *gin.Context) {
 	ResponseSuccess(c, postList)
 }
 
+// PostList2Handler 帖子列表接口优化版
+// 支持根据评分和发布时间排序
+func PostList2Handler(c *gin.Context) {
+	//定义参数，默认第一页，一页10条数据，按照发布时间排序
+	p := &models.ParamPostList{
+		Page:  1,
+		Size:  10,
+		Order: "time",
+	}
+	//参数绑定与参数校验
+	if err := c.ShouldBindQuery(p); err != nil {
+		zap.L().Error("PostList2Handler with invalid params", zap.Error(err))
+		if errs, ok := err.(validator.ValidationErrors); ok {
+			ResponseErrorWithMsg(c, CodeInvalidParam, removeTopStruct(errs.Translate(trans)))
+			return
+		}
+		ResponseError(c, CodeInvalidParam)
+		return
+	}
+	zap.L().Debug("PostList2Handler params", zap.Any("params", p))
+
+	//从逻辑层获取数据
+	postList, err := logic.GetPostList2(p)
+	if err != nil {
+		zap.L().Error("logic.GetPostList(page,pageSize) failed", zap.Error(err))
+		ResponseErrorWithMsg(c, CodeUsualFailed, "获取帖子列表失败")
+		return
+	}
+	ResponseSuccess(c, postList)
+
+}
+
 // PostVoteHandler 帖子投票处理函数
 func PostVoteHandler(c *gin.Context) {
 	// 1.参数校验 文章ID 投票情况(1赞成票 -1反对票 0取消之前的投票)

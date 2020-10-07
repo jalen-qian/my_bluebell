@@ -34,7 +34,10 @@ func SetupRouter() *gin.Engine {
 		//帖子详情接口
 		v1Group.GET("/post/:postId", controller.PostDetailHandler)
 		//帖子列表接口，支持分页
-		v1Group.GET("/posts2", controller.PostListHandler)
+		v1Group.GET("/posts", controller.PostListHandler)
+
+		//帖子列表接口优化，支持选择 发布时间和评分排序
+		v1Group.GET("/posts2", controller.PostList2Handler)
 
 		//帖子投票接口
 		v1Group.POST("/vote", controller.PostVoteHandler)

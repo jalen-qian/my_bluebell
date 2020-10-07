@@ -2,6 +2,11 @@ package models
 
 import "strconv"
 
+const (
+	OrderTypeTime  = "time"
+	OrderTypeScore = "score"
+)
+
 // 用户注册相关参数
 type ParamSignUp struct {
 	Username   string `json:"username" binding:"required"`
@@ -33,4 +38,11 @@ type ParamPostVote struct {
 
 func (p *ParamPostVote) GetFloat64Direction() (float64, error) {
 	return strconv.ParseFloat(p.Direction, 0)
+}
+
+// 帖子列表接口参数
+type ParamPostList struct {
+	Page  int64  `form:"page"` //注意tag不是json了，我们是获取QueryString参数
+	Size  int64  `form:"size"`
+	Order string `form:"order" binding:"required,oneof=time score"`
 }
